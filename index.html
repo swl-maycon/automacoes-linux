@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEDSEC // AUTOMATIONS SOURCE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: #05050a;
+            color: #00ff66;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Efeito de linhas de monitor antigo (CRT Scanlines) */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .terminal {
+            width: min(650px, 90%);
+            padding: 30px;
+            background: rgba(5, 5, 10, 0.85);
+            border: 2px dashed #00ff66;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+            text-align: center;
+            animation: glitch-border 2s infinite;
+        }
+
+        .dedsec-logo {
+            font-size: 0.85rem;
+            white-space: pre;
+            line-height: 1.2;
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055;
+            margin-bottom: 25px;
+            display: inline-block;
+            text-align: left;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: #00ff66;
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #ff0055;
+            color: #fff;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+            animation: blink 1s infinite alternate;
+        }
+
+        /* Loading Pixelado Hacker */
+        .loading-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 25px;
+        }
+
+        .loading-text {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pixel-bar {
+            width: 100%;
+            height: 24px;
+            border: 2px solid #00ff66;
+            padding: 2px;
+            position: relative;
+        }
+
+        .pixel-progress {
+            height: 100%;
+            background: #00ff66;
+            width: 0%;
+            box-shadow: 0 0 10px #00ff66;
+            animation: fill-bar 4s steps(10) infinite;
+        }
+
+        .console-logs {
+            font-size: 0.8rem;
+            color: #888;
+            text-align: left;
+            height: 60px;
+            overflow: hidden;
+            line-height: 1.5;
+            border-top: 1px solid rgba(0, 255, 102, 0.2);
+            padding-top: 15px;
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes fill-bar {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes glitch-border {
+            0%, 100% { border-style: dashed; border-color: #00ff66; }
+            50% { border-style: dotted; border-color: #ff0055; box-shadow: 0 0 20px rgba(255, 0, 85, 0.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal">
+        <!-- Logo Pixel Art da Caveira DedSec -->
+        <div class="dedsec-logo">
+ █▄─▄▄─█▄─▄▄─█▄─▄▄▀█─▄▄▄▄█▄─▄▄─█▄─▄▄▀█
+ ██─▄█▀██─▄█▀██─██─█▄▄▄▄─██─▄█▀██─██─█
+ ▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀
+        </div>
+
+        <h1>Repository: Automations</h1>
+        <div class="status-badge">Atualmente Vazio</div>
+
+        <div class="loading-container">
+            <div class="loading-text">
+                <span>[AGUARDANDO NOVOS PROJETOS...]</span>
+                <span id="percentage">0%</span>
+            </div>
+            <div class="pixel-bar">
+                <div class="pixel-progress"></div>
+            </div>
+        </div>
+
+        <div class="console-logs">
+            <p id="log-line">> Iniciando escaneamento de scripts python...</p>
+        </div>
+    </div>
+
+    <script>
+        // Sistema dinâmico para mudar os logs na tela simulando o terminal
+        const logs = [
+            "> Iniciando escaneamento de scripts Python...",
+            "> Erro 404: Nenhum arquivo .py ou .sh encontrado.",
+            "> Conectando ao core de automações de Pedro Maycon...",
+            "> Status: Ideias em compilação no background.",
+            "> Aguardando git push do desenvolvedor..."
+        ];
+        
+        let logIndex = 0;
+        const logLine = document.getElementById("log-line");
+        const percentage = document.getElementById("percentage");
+
+        // Loop de logs do console
+        setInterval(() => {
+            logIndex = (logIndex + 1) % logs.length;
+            logLine.textContent = logs[logIndex];
+        }, 2500);
+
+        // Contador de porcentagem sincronizado com o loading pixelado
+        let percent = 0;
+        setInterval(() => {
+            percent += 10;
+            if(percent > 100) percent = 0;
+            percentage.textContent = percent + "%";
+        }, 400);
+    </script>
+</body>
+</html>
